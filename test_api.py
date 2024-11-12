@@ -138,4 +138,6 @@ class TestOutputGenerator:
             csv_out == "principle,rate,time_since_investment,type,result\n1000,10,5,simple,1500\n")
 
     def test_error_output(self, output_generator):
-        assert (False)
+        records = [1000]
+        csv_out = output_generator.generate_projection_csv(records)
+        assert (csv_out[0:5] == "Error")
