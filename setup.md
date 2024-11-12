@@ -31,3 +31,5 @@ pip install pytest
 ```
 
 The investmentcalc.py file is full of mock functions that are not implemented, but are required for pytest to fail properly instead of error.
+
+For reference, all tests are found in test_api.py
