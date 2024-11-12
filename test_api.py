@@ -21,6 +21,7 @@ class TestDataProcessor:
 
     def test_parse_valid_csv(self, data_processor, csv_contents):
         record_list = data_processor.parse_csv_contents(csv_contents)
+        assert (record_list is not None)
         assert (len(record_list) > 0)
         for record in record_list:
             assert isinstance(record, Record)
@@ -48,8 +49,11 @@ class TestDataProcessor:
 
         for rate in rates:
             for type in types:
-                assert data_processor.handle_investment(
-                    principle, rate, time_since_investment, type) == expected_results.pop(0)
+                result = data_processor.handle_investment(
+                    principle, rate, time_since_investment, type)
+
+                assert (result is not None)
+                assert (result == expected_results.pop(0))
 
     def test_nonpositive_handle_investment(self, data_processor):
         principle = 1000
@@ -65,8 +69,11 @@ class TestDataProcessor:
 
         for rate in rates:
             for type in types:
-                assert data_processor.handle_investment(
-                    principle, rate, time_since_investment, type) == expected_results.pop(0)
+                result = data_processor.handle_investment(
+                    principle, rate, time_since_investment, type)
+
+                assert (result is not None)
+                assert (result == expected_results.pop(0))
 
     def test_multiple_investments_from_file(self, data_processor, csv_contents):
         record_list = data_processor.parse_csv_contents(csv_contents)
@@ -94,8 +101,11 @@ class TestDataProcessor:
 
         for type in types:
             for time in times_since_investment:
-                assert (data_processor.handle_investment(
-                    principle, rate, time, type) == expected_results.pop(0))
+                investment_result = data_processor.handle_investment(
+                    principle, rate, time, type)
+
+                assert (investment_result is not None)
+                assert (investment_result == expected_results.pop(0))
 
     def test_random_valid_csv(self, data_processor):
         random_contents = "investment id,investment name,principle,interest rate,interest type,compounding interval"
@@ -109,6 +119,7 @@ class TestDataProcessor:
             random_contents += f"\n{random_id},{random_name},{random_principle},{random_rate},{random_type},{random_interval}"
 
         record_list = data_processor.parse_csv_contents(random_contents)
+        assert (record_list is not None)
         assert (len(record_list) == 1000)
         for record in record_list:
             assert isinstance(record, Record)
@@ -116,7 +127,7 @@ class TestDataProcessor:
 
 class TestOutputGenerator:
 
-    @pytest.fixture
+    @ pytest.fixture
     def output_generator(self) -> OutputGenerator:
         return OutputGenerator()
 
@@ -127,4 +138,4 @@ class TestOutputGenerator:
             csv_out == "principle,rate,time_since_investment,type,result\n1000,10,5,simple,1500\n")
 
     def test_error_output(self, output_generator):
-        Assert(False)
+        assert (False)
