@@ -11,7 +11,7 @@ class DataProcessor():
         pass
 
     def parse_csv_contents(self, contents: str) -> list[str]:
-        pass
+        return []
 
     def handle_investment(self, principle: int, rate: int, time_since_investment: int, type: str) -> int:
         pass
@@ -19,9 +19,14 @@ class DataProcessor():
 
 class OutputGenerator():
 
-    pass
+    def __init__(self):
+        pass
+
+    def generate_projection_csv(self, records: list) -> str:
+        pass
 
 
 class Record():
 
-    pass
+    def __init__(self):
+        pass
