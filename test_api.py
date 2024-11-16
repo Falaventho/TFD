@@ -1,4 +1,6 @@
-from investmentcalc import *
+from dataprocessor import DataProcessor
+from outputgenerator import OutputGenerator
+from helpers import Record
 import pytest
 import random
 
@@ -116,7 +118,8 @@ class TestDataProcessor:
             random_rate = random.randint(0, 100)
             random_type = random.choice(["simple", "compound"])
             random_interval = random.randint(1, 10)
-            random_contents += f"\n{random_id},{random_name},{random_principle},{random_rate},{random_type},{random_interval}"
+            random_contents += f"\n{random_id},{random_name},{
+                random_principle},{random_rate},{random_type},{random_interval}"
 
         record_list = data_processor.parse_csv_contents(random_contents)
         assert (record_list is not None)
