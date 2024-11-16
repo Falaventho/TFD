@@ -1,6 +1,6 @@
 from dataprocessor import DataProcessor
 from outputgenerator import OutputGenerator
-from helpers import Record
+from utils import Record
 import pytest
 import random
 
@@ -9,7 +9,7 @@ class TestDataProcessor:
 
     @pytest.fixture
     def csv_contents(self) -> str:
-        with open("example.csv", "r") as f:
+        with open("../csv files/example.csv", "r") as f:
             contents = f.read()
         return contents
 
