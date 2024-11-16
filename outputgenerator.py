@@ -2,7 +2,7 @@ from utils import Record
 from enum import Enum
 
 
-class ReportType:
+class ReportType(Enum):
     PROJECTION_CSV = 0
     PROJECTION_HTML = 1
     CURRENT_CSV = 10
