@@ -1,4 +1,4 @@
 class Record():
 
-    def __init__(self, principle: int, rate: int, time_since_investment: int, type: str, result: int):
+    def __init__(self, principle: int, rate: int, time_since_investment: int, type: str, result: int = None):
         pass
