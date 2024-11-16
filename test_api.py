@@ -130,7 +130,7 @@ class TestDataProcessor:
 
 class TestOutputGenerator:
 
-    @ pytest.fixture
+    @pytest.fixture
     def output_generator(self) -> OutputGenerator:
         return OutputGenerator()
 
