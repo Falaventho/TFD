@@ -55,7 +55,7 @@ class UserInterface:
         records = self.data_processor.parse_csv_contents(contents)
         projection_csv = self.output_generator.generate_projection_csv(records)
 
-        with open("projection.csv", "w") as f:
+        with open("csv files/projection.csv", "w") as f:
             f.write(projection_csv)
 
         messagebox.showinfo("Success", "Projection saved to projection.csv")
