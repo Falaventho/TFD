@@ -39,6 +39,10 @@ class UserInterface:
             self.input_frame, text="Process", command=self._handle_process)
         self.input_process_button.pack()
 
+        self.input_write_button = ttk.Button(
+            self.input_frame, text="Write Projection CSV", command=self._write_projection_csv)
+        self.input_write_button.pack()
+
     def _handle_browse(self):
         file_path = filedialog.askopenfilename(
             filetypes=[("CSV Files", "*.csv")])
