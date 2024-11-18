@@ -2,8 +2,15 @@ from enum import Enum
 
 
 class InterestType(Enum):
-    SIMPLE = 0
-    COMPOUND = 1
+    SIMPLE = "simple"
+    COMPOUND = "compound"
+
+
+class CompoudningInterval(Enum):
+    DAILY = "daily"
+    MONTHLY = "monthly"
+    QUARTERLY = "quarterly"
+    YEARLY = "yearly"
 
 
 class Record():
