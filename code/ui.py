@@ -11,6 +11,7 @@ class UserInterface:
         self.root = root
         self.data_processor = DataProcessor()
         self.output_generator = OutputGenerator()
+        self.projection_csv = None
         self._setup_ui()
 
     def _setup_ui(self):
@@ -38,6 +39,10 @@ class UserInterface:
             self.input_frame, text="Process", command=self._handle_process)
         self.input_process_button.pack()
 
+        self.input_write_button = ttk.Button(
+            self.input_frame, text="Write Projection CSV", command=self._write_projection_csv)
+        self.input_write_button.pack()
+
     def _handle_browse(self):
         file_path = filedialog.askopenfilename(
             filetypes=[("CSV Files", "*.csv")])
@@ -53,9 +58,14 @@ class UserInterface:
             contents = f.read()
 
         records = self.data_processor.parse_csv_contents(contents)
-        projection_csv = self.output_generator.generate_projection_csv(records)
+        self.projection_csv = self.output_generator.generate_projection_csv(
+            records)
 
-        with open("projection.csv", "w") as f:
-            f.write(projection_csv)
-
-        messagebox.showinfo("Success", "Projection saved to projection.csv")
+    def _write_projection_csv(self):
+        if self.projection_csv:
+            with open("projection.csv", "w") as f:
+                f.write(self.projection_csv)
+            messagebox.showinfo(
+                "Success", "Projection CSV file written successfully.")
+        else:
+            messagebox.showerror("Error", "No projection CSV file to write.")
