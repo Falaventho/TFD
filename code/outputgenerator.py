@@ -2,7 +2,6 @@ from utils import Record
 from enum import Enum
 
 
-
 class ReportType(Enum):
     PROJECTION_CSV = 0
     PROJECTION_HTML = 1
@@ -19,13 +18,11 @@ class OutputGenerator():
         pass
 
     def generate_projection_csv(self, records: list[Record]) -> str:
-        x = 0
-        while x != len(Record):
-            test = [Record(x) + ","]
-            Record(x) = test
-            print(Record(x))
-            x+=1
-        pass
+        csv = "investment id,investment name,principle,interest rate,interest type,compounding interval,projected value"
+        for record in records:
+            csv += "\n" + str(record)
+
+        return csv
 
     def generate_projection_html(self, records: list[Record]) -> str:
         pass
