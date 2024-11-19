@@ -29,7 +29,7 @@ class DataProcessor():
 
         return records
 
-    def handle_investment(self, principle: int, rate: int, time_since_investment: int, type: str) -> int:
+    def __calculate_investment_result(self, principle: int, rate: int, time_since_investment: int, type: InterestType) -> int:
         pass
 
     def __calculate_days_since_investment(self, investment_date) -> int:
