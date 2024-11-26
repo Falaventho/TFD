@@ -1,4 +1,4 @@
-investment id,investment name,principle,interest rate,interest type,compounding interval
+investment id,investment name,principal,interest rate,interest type,compounding interval
 a81776b2,High Growth Fund,239266.68,4.93,compound,daily
 e7056463,Retirement Savings,167618.68,10.81,compound,monthly
 ed573eba,Blue Chip Stocks,371406.47,0.66,simple,daily
