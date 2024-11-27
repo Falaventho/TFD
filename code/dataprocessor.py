@@ -1,4 +1,4 @@
-from utils import Record, InterestType, CompoudningInterval
+from utils import Record, InterestType, CompoundingInterval
 from datetime import date, datetime
 
 
@@ -24,7 +24,7 @@ class DataProcessor():
                 investment_date)
 
             record = Record(id, name, float(principle), float(
-                rate), time_since_investment, InterestType[type], CompoudningInterval[interval])
+                rate), time_since_investment, InterestType[type], CompoundingInterval[interval])
             records.append(record)
 
         return records

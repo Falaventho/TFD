@@ -6,7 +6,7 @@ class InterestType(Enum):
     COMPOUND = "compound"
 
 
-class CompoudningInterval(Enum):
+class CompoundingInterval(Enum):
     DAILY = "daily"
     MONTHLY = "monthly"
     QUARTERLY = "quarterly"
@@ -27,7 +27,7 @@ class Record():
         self.result = result or self.__calculate_result()
 
     def __str__(self):
-        return f"Record: {self.id}: {self.name} | {self.principle:.2f} invested at {self.rate * 100 :.2f}%, {self.time_since_investment} days ago, {self.interest_type} {self.__get_type_label()} currently valued at: {self.result}"
+        return f"Record: {self.id}: {self.name} | {self.principle:.2f} invested at {self.rate * 100:.2f}%, {self.time_since_investment} days ago, {self.interest_type} {self.__get_type_label()} currently valued at: {self.result}"
 
     def __get_type_label(self):
         match self.interest_type:
