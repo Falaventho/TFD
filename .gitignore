@@ -5,3 +5,4 @@ log.diff
 .vs/
 .vscode/
 .coverage
+htmlcov/
