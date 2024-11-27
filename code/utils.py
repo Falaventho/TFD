@@ -10,7 +10,7 @@ class CompoundingInterval(Enum):
     DAILY = "daily"
     MONTHLY = "monthly"
     QUARTERLY = "quarterly"
-    ANNUALLY = "yearly"
+    ANNUALLY = "annually"
 
 
 class Record():
