@@ -29,9 +29,6 @@ class DataProcessor():
 
         return records
 
-    def __calculate_investment_result(self, principle: int, rate: int, time_since_investment: int, type: InterestType) -> int:
-        pass
-
     def __calculate_days_since_investment(self, investment_date: str) -> int:
         listed_date = datetime.strptime(investment_date, "%Y-%m-%d")
         return (date.today() - date(listed_date)).days
@@ -39,68 +36,84 @@ class DataProcessor():
     def parse_csv_contents(self, contents: str) -> list[str]:
         pass
 
-    def handle_investment(self, principal: float, interest_rate: float, time_period: int, type: str) -> float:
-        pass
-
-    # Calculates simple interest
-    def simple_interest(self, principal, interest_rate, time_period):
+    def handle_investment(self, principal: float, interest_rate: float, investment_date: str, interest_type: InterestType, compounding_interval: CompoundingInterval) -> tuple[float, float]:
         """
             Args:
                 principal: Initial amount invested.
-                interest_rate: Annual interest rate as a decimal
-                time_period: Time since investment (e.g., daily, monthly, quarterly, annually)
+                interest_rate: Annual interest rate for investment (e.g., 0.05 for 5%)
+                investment_date: Date of investment in the format "YYYY-MM-DD"
+                interest_type: Type of interest calculation (simple or compound)
+                compounding_interval: How often the interest is compounded (daily, monthly, quarterly, annually)
+
+            Returns:
+                Tuple of calculated interest and total amount after interest.
+        """
+
+        days_since_investment = self.__calculate_days_since_investment(
+            investment_date)
+
+        if interest_type == InterestType.SIMPLE:
+            interest = self.__calculate_simple_interest(
+                principal, interest_rate, days_since_investment)
+        elif interest_type == InterestType.COMPOUND:
+            interest = self.__calculate_compound_interest(
+                principal, interest_rate, days_since_investment, compounding_interval)
+        else:
+            raise ValueError("Invalid interest type")
+
+        total_amount = principal + interest
+
+        return interest, total_amount
+
+    # Calculates simple interest
+    def __calculate_simple_interest(self, principal: float, interest_rate: float, days_since_investment: int) -> float:
+        """
+            Args:
+                principal: Initial amount invested.
+                interest_rate: Annual interest rate for investment (e.g., 0.05 for 5%)
+                days_since_investment: Number of days since investment
 
             Returns:
                 Calculated simple interest.
         """
 
-        if time_period == 'daily':
-            time_period = 1 / 365.25
-        elif time_period == 'monthly':
-            time_period = 1 / 12
-        elif time_period == 'quarterly':
-            time_period = 1 / 4
-        elif time_period == 'annually':
-            time_period = 1
-        else:
-            print("Invalid time period")
-            return
-
         # simple interest calculation
-        interest = (principal * interest_rate * time_period) / 100
+        years = days_since_investment / 365
+        interest = (principal * interest_rate * years)
         # simplify to two decimal places
         interest = round(interest, 2)
 
         return interest
 
-    def compound_interest(self, principal, interest_rate, time_period):
+    def __calculate_compound_interest(self, principal: float, interest_rate: float, days_since_investment: int, compounding_interval: CompoundingInterval) -> float:
         """
             Args:
                 principal: Initial amount invested.
-                interest_rate: Annual interest rate as a decimal
-                time_period: Time since investment (e.g., daily, monthly, quarterly, annually)
+                interest_rate: Annual interest rate as a decimal (e.g., 0.05 for 5%)
+                days_since_investment: Number of days since investment
+                compounding_interval: How often the interest is compounded (daily, monthly, quarterly, annually)
 
             Returns:
                 Calculated compound interest.
         """
 
-        if time_period == 'daily':
-            n = 365.25
-        elif time_period == 'monthly':
-            n = 12
-        elif time_period == 'quarterly':
-            n = 4
-        elif time_period == 'annually':
-            n = 1
-        else:
-            print("Invalid time period")
-            return
+        match compounding_interval:
+            case CompoundingInterval.DAILY:
+                n = 365
+            case CompoundingInterval.MONTHLY:
+                n = 12
+            case CompoundingInterval.QUARTERLY:
+                n = 4
+            case CompoundingInterval.ANNUALLY:
+                n = 1
+            case _:
+                raise ValueError("Invalid compounding interval")
 
-        # Calculate compound interest over the course of 1 year
-        # A = final amount
-        t = 1
-        A = principal * (1 + interest_rate/n)**(n*t)
-        interest = A - principal
+        # Calculate compound interest over the course of t years
+        # a = final amount
+        t = days_since_investment / 365
+        a = principal * (1 + interest_rate/n)**(n*t)
+        interest = a - principal
         # Simplify to two decimal places
         interest = round(interest, 2)
 
