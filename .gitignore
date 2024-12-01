@@ -2,3 +2,7 @@ __pycache__/
 .venv/
 .pytest_cache/
 log.diff
+.vs/
+.vscode/
+.coverage
+htmlcov/
