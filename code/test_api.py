@@ -165,3 +165,10 @@ class TestOutputGenerator:
         assert (csv_out[0:5] == "Error")
         assert (csv_out.split("\n")[1] ==
                 "Negative investment values detected")
+
+    def test_empty_record_list_output(self, output_generator):
+        records = []
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out[0:5] == "Error")
+        assert (csv_out.split("\n")[1] == "No records to process")
