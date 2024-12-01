@@ -187,3 +187,28 @@ class TestOutputGenerator:
             records, ReportType.PROJECTION_CSV)
         assert (csv_out[0:5] == "Error")
         assert (csv_out.split("\n")[1] == "Records have not been processed")
+
+
+class TestUtils:
+
+    def test_get_interest_type_label(self):
+        record = Record("1", "Test Investment", 1000, .1, 30,
+                        InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100)
+        assert record._get_interest_type_label() == "compounded annually"
+
+    def test_get_compounding_interval_label(self):
+        records = [
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.DAILY, 1100),
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.MONTHLY, 1100),
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.QUARTERLY, 1100),
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100)
+        ]
+
+        expected_labels = ["daily", "monthly", "quarterly", "annually"]
+
+        for record in records:
+            assert record._get_compounding_interval_label() == expected_labels.pop(0)

@@ -27,17 +27,17 @@ class Record():
         self.result = result
 
     def __str__(self):
-        return f"{self.id}: {self.name} | ${self._format_money(self.principle)} invested at {self.rate * 100:.2f}%, {self.time_since_investment} days ago, {self.__get_interest_type_label()} currently valued at ${self._format_money(self.result)}"
+        return f"{self.id}: {self.name} | ${self._format_money(self.principle)} invested at {self.rate * 100:.2f}%, {self.time_since_investment} days ago, {self._get_interest_type_label()} currently valued at ${self._format_money(self.result)}"
 
-    def __get_interest_type_label(self):
+    def _get_interest_type_label(self):
         match self.interest_type:
             case InterestType.SIMPLE:
                 return "accruing simple interest"
             case InterestType.COMPOUND:
-                interval_label = self.__get_compounding_interval_label()
+                interval_label = self._get_compounding_interval_label()
                 return f"compounded {interval_label}"
 
-    def __get_compounding_interval_label(self):
+    def _get_compounding_interval_label(self):
         match self.compounding_interval:
             case CompoundingInterval.DAILY:
                 return "daily"
