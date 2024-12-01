@@ -133,10 +133,13 @@ class TestOutputGenerator:
         return OutputGenerator()
 
     def test_csv_output(self, output_generator):
-        records = [Record(1000, 10, 5, "simple", 1000 + 1000 * 10 * 5)]
+        records = [Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100)]
         csv_out = output_generator.generate_projection_csv(records)
-        assert (
-            csv_out == "principle,rate,time_since_investment,type,result\n1000,10,5,simple,1500\n")
+        assert (csv_out is not None)
+        assert (csv_out[0:5] == "inves")
+        assert (csv_out.split("\n")[
+                1] == "1: Test Investment | $1,000.00 invested at 10.00%, 30 days ago, compounded annually currently valued at $1,100.00")
 
     def test_error_output(self, output_generator):
         records = [1000]
