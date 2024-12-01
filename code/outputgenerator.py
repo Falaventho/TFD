@@ -41,5 +41,7 @@ class OutputGenerator():
         pass
 
     def generate_error_output(self, errors: list[str]) -> str:
-        error_head = "Error(s) detected:"
-        return error_head + "\n".join(errors)
+        e = "Error(s) detected:"
+        for msg in errors:
+            e += f"\n{msg}"
+        return e

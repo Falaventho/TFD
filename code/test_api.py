@@ -149,3 +149,10 @@ class TestOutputGenerator:
         csv_out = output_generator.generate_report(
             records, ReportType.PROJECTION_CSV)
         assert (csv_out[0:5] == "Error")
+
+    def test_none_record_output(self, output_generator):
+        records = [None]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out[0:5] == "Error")
+        assert (csv_out.split("\n")[1] == "Invalid record detected")
