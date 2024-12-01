@@ -39,6 +39,10 @@ class UserInterface:
             self.input_frame, text="Process", command=self._handle_process)
         self.input_process_button.pack()
 
+        self.input_view_button = ttk.Button(
+            self.input_frame, text="View Projection CSV", command=lambda: self._display_csv(self.projection_csv))
+        self.input_view_button.pack()
+
         self.input_write_button = ttk.Button(
             self.input_frame, text="Write Projection CSV", command=self._write_projection_csv)
         self.input_write_button.pack()
@@ -69,3 +73,20 @@ class UserInterface:
                 "Success", "Projection CSV file written successfully.")
         else:
             messagebox.showerror("Error", "No projection CSV file to write.")
+
+    def _display_csv(self, csv_contents: str):
+        if not csv_contents:
+            messagebox.showerror("Error", "No CSV contents to display.")
+            return
+        self.output_frame = ttk.LabelFrame(self.root, text="Output")
+        self.output_frame.pack(pady=10, fill="both", expand=True)
+
+        self.output_text = tk.Text(self.output_frame, width=160, height=30)
+        self.output_text.pack()
+
+        self.output_text.insert(tk.END, csv_contents)
+
+    def _display_csv_from_vile(self, file_path: str):
+        with open(file_path, "r") as f:
+            contents = f.read()
+        self.display_csv(contents)

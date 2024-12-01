@@ -18,7 +18,7 @@ class OutputGenerator():
         pass
 
     def generate_projection_csv(self, records: list[Record]) -> str:
-        csv = "investment id,investment name,principle,interest rate,interest type,compounding interval,projected value"
+        csv = "investment id,investment name,principle,interest rate, investment date,interest type,compounding interval,projected value"
         for record in records:
             csv += "\n" + str(record)
 
