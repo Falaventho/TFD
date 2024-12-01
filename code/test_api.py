@@ -28,6 +28,12 @@ class TestDataProcessor:
         for record in record_list:
             assert isinstance(record, Record)
 
+    def test_header_mismatch_csv(self, data_processor, csv_contents):
+        malformed_contents = csv_contents.replace(
+            "investment id", "investment_id")
+        with pytest.raises(ValueError):
+            data_processor.parse_csv_contents(malformed_contents)
+
     def test_parse_invalid_csv(self, data_processor, csv_contents):
         position = random.randint(0, len(csv_contents))
         malformed_contents = csv_contents[:position] + \
