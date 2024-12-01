@@ -14,7 +14,7 @@ class CompoundingInterval(Enum):
 
 
 class Record():
-    # investment id,investment name,principle,interest rate,interest type,compounding interval
+
     def __init__(self, id: str, name: str, principle: float, interest_rate: float, time_since_investment: int, interest_type: InterestType, compounding_interval: str, result: float = None):
         self.id = id
         self.name = name
