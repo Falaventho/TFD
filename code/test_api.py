@@ -1,6 +1,6 @@
 from dataprocessor import DataProcessor
 from outputgenerator import OutputGenerator
-from utils import Record
+from utils import Record, InterestType, CompoundingInterval
 import pytest
 import random
 
@@ -37,25 +37,21 @@ class TestDataProcessor:
 
     def test_handle_investment(self, data_processor):
         principle = 1000
-        time_since_investment = 5
-        rates = [10, 20, 30]
-        types = ["simple", "compound"]
+        days_since_investment = 30
+        rate = 0.1
+        types = [InterestType.SIMPLE, InterestType.COMPOUND]
+        compounding_interval = CompoundingInterval.ANNUALLY
         expected_results = [
-            1000 + 1000 * 10 / 100 * time_since_investment,
-            1000 * (1 + 10 / 100) ** time_since_investment,
-            1000 + 1000 * 20 / 100 * time_since_investment,
-            1000 * (1 + 20 / 100) ** time_since_investment,
-            1000 + 1000 * 30 / 100 * time_since_investment,
-            1000 * (1 + 30 / 100) ** time_since_investment
+            round(1000.0 * (1 + (.1 * 30/365)), 2),
+            round(1000 * (1 + .1/1)**(1*30/365), 2)
         ]
 
-        for rate in rates:
-            for type in types:
-                result = data_processor.handle_investment(
-                    principle, rate, time_since_investment, type)
+        for type in types:
+            result = data_processor.handle_investment(
+                principle, rate, days_since_investment, type, compounding_interval)
 
-                assert (result is not None)
-                assert (result == expected_results.pop(0))
+            assert (result is not None)
+            assert (result == expected_results.pop(0))
 
     def test_nonpositive_handle_investment(self, data_processor):
         principle = 1000
