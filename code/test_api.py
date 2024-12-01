@@ -9,7 +9,7 @@ class TestDataProcessor:
 
     @pytest.fixture
     def csv_contents(self) -> str:
-        with open("../csv files/example.csv", "r") as f:
+        with open("./csv files/example.csv", "r") as f:
             contents = f.read()
         return contents
 
@@ -29,7 +29,7 @@ class TestDataProcessor:
             assert isinstance(record, Record)
 
     def test_parse_invalid_csv(self, data_processor, csv_contents):
-        position = random.range(0, len(csv_contents))
+        position = random.randint(0, len(csv_contents))
         malformed_contents = csv_contents[:position] + \
             "," + csv_contents[position:]
         with pytest.raises(ValueError):
