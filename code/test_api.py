@@ -138,7 +138,8 @@ class TestOutputGenerator:
     def test_csv_output(self, output_generator):
         records = [Record("1", "Test Investment", 1000, .1, 30,
                           InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100)]
-        csv_out = output_generator.generate_projection_csv(records)
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
         assert (csv_out is not None)
         assert (csv_out[0:5] == "inves")
         assert (csv_out.split("\n")[
