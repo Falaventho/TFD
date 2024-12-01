@@ -192,9 +192,16 @@ class TestOutputGenerator:
 class TestUtils:
 
     def test_get_interest_type_label(self):
-        record = Record("1", "Test Investment", 1000, .1, 30,
-                        InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100)
-        assert record._get_interest_type_label() == "compounded annually"
+        records = [Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100),
+                   Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.SIMPLE, CompoundingInterval.ANNUALLY, 1100)
+                   ]
+
+        expected_labels = ["compounded annually", "accruing simple interest"]
+
+        for record in records:
+            assert record._get_interest_type_label() == expected_labels.pop(0)
 
     def test_get_compounding_interval_label(self):
         records = [
