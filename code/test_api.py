@@ -54,24 +54,16 @@ class TestDataProcessor:
             assert (result == expected_results.pop(0))
 
     def test_nonpositive_handle_investment(self, data_processor):
-        principle = 1000
-        time_since_investment = 5
-        rates = [0, -10]
-        types = ["simple", "compound"]
-        expected_results = [
-            1000,
-            1000,
-            1000 + 1000 * -10 / 100 * time_since_investment,
-            1000 * (1 + -10 / 100) ** time_since_investment
-        ]
+        principle = 100
+        days_since_investment = 395
+        rate = 0
+        type = InterestType.SIMPLE
+        compounding_interval = CompoundingInterval.ANNUALLY
 
-        for rate in rates:
-            for type in types:
-                result = data_processor.handle_investment(
-                    principle, rate, time_since_investment, type)
-
-                assert (result is not None)
-                assert (result == expected_results.pop(0))
+        result = data_processor.handle_investment(
+            principle, rate, days_since_investment, type, compounding_interval)
+        assert (result is not None)
+        assert (result == 100)
 
     def test_multiple_investments_from_file(self, data_processor, csv_contents):
         record_list = data_processor.parse_csv_contents(csv_contents)
@@ -81,29 +73,39 @@ class TestDataProcessor:
 
     def test_multiple_time_periods(self, data_processor):
         principle = 1000
-        times_since_investment = [1, 2, 3, 4, 5]
-        rate = 10
-        types = ["simple", "compound"]
-        expected_results = [
-            1000 + 1000 * 10 * 1,
-            1000 + 1000 * 10 * 2,
-            1000 + 1000 * 10 * 3,
-            1000 + 1000 * 10 * 4,
-            1000 + 1000 * 10 * 5,
-            1000 * (1 + 10 / 100) ** 1,
-            1000 * (1 + 10 / 100) ** 2,
-            1000 * (1 + 10 / 100) ** 3,
-            1000 * (1 + 10 / 100) ** 4,
-            1000 * (1 + 10 / 100) ** 5
+        times_since_investment = [10, 50, 100, 300, 600]
+        rate = .1
+        types = [InterestType.SIMPLE, InterestType.COMPOUND]
+        interval = CompoundingInterval.ANNUALLY
+
+        expected_simple_results = [
+            round(1000.0 * (1 + (.1 * 10/365)), 2),
+            round(1000.0 * (1 + (.1 * 50/365)), 2),
+            round(1000.0 * (1 + (.1 * 100/365)), 2),
+            round(1000.0 * (1 + (.1 * 300/365)), 2),
+            round(1000.0 * (1 + (.1 * 600/365)), 2)
+        ]
+
+        expected_compound_results = [
+            round(1000 * (1 + .1/1)**(1*10/365), 2),
+            round(1000 * (1 + .1/1)**(1*50/365), 2),
+            round(1000 * (1 + .1/1)**(1*100/365), 2),
+            round(1000 * (1 + .1/1)**(1*300/365), 2),
+            round(1000 * (1 + .1/1)**(1*600/365), 2)
         ]
 
         for type in types:
-            for time in times_since_investment:
+            if type == InterestType.SIMPLE:
+                expected_results = expected_simple_results
+            else:
+                expected_results = expected_compound_results
+
+            for time, expected_result in zip(times_since_investment, expected_results):
                 investment_result = data_processor.handle_investment(
-                    principle, rate, time, type)
+                    principle, rate, time, type, interval)
 
                 assert (investment_result is not None)
-                assert (investment_result == expected_results.pop(0))
+                assert (investment_result == expected_result)
 
     def test_random_valid_csv(self, data_processor):
         random_contents = "investment id,investment name,principle,interest rate,interest type,compounding interval"

@@ -68,7 +68,7 @@ class DataProcessor():
 
         total_amount = principal + interest
 
-        return total_amount
+        return round(total_amount, 2)
 
     # Calculates simple interest
     def _calculate_simple_interest(self, principal: float, interest_rate: float, days_since_investment: int) -> float:
