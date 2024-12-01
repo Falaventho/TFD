@@ -5,8 +5,6 @@ from enum import Enum
 class ReportType(Enum):
     PROJECTION_CSV = 0
     PROJECTION_HTML = 1
-    CURRENT_CSV = 10
-    CURRENT_HTML = 11
 
 
 class OutputGenerator():
@@ -15,7 +13,22 @@ class OutputGenerator():
         pass
 
     def generate_report(self, records: list[Record], type: ReportType) -> str:
-        pass
+        if len(records) == 0:
+            return self.generate_error_output(["No records to process"])
+
+        for record in records:
+            if record is None:
+                return self.generate_error_output(["Invalid record detected"])
+            elif record.result is None:
+                return self.generate_error_output(["Records have not been processed"])
+            elif record.result < 0:
+                return self.generate_error_output(["Negative investment values detected"])
+
+        match type:
+            case ReportType.PROJECTION_CSV:
+                return self.generate_projection_csv(records)
+            case ReportType.PROJECTION_HTML:
+                return self.generate_projection_html(records)
 
     def generate_projection_csv(self, records: list[Record]) -> str:
         csv = "investment id,investment name,principle,interest rate,investment date,interest type,compounding interval,projected value"
@@ -28,4 +41,5 @@ class OutputGenerator():
         pass
 
     def generate_error_output(self, errors: list[str]) -> str:
-        pass
+        error_head = "Error(s) detected:"
+        return error_head + "\n".join(errors)

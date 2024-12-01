@@ -1,5 +1,5 @@
 from dataprocessor import DataProcessor
-from outputgenerator import OutputGenerator
+from outputgenerator import OutputGenerator, ReportType
 from utils import Record, InterestType, CompoundingInterval
 import pytest
 import random
@@ -145,6 +145,7 @@ class TestOutputGenerator:
                 1] == "1: Test Investment | $1,000.00 invested at 10.00%, 30 days ago, compounded annually currently valued at $1,100.00")
 
     def test_error_output(self, output_generator):
-        records = [1000]
-        csv_out = output_generator.generate_projection_csv(records)
+        records = [None, None]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
         assert (csv_out[0:5] == "Error")
