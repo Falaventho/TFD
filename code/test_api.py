@@ -173,3 +173,11 @@ class TestOutputGenerator:
             records, ReportType.PROJECTION_CSV)
         assert (csv_out[0:5] == "Error")
         assert (csv_out.split("\n")[1] == "No records to process")
+
+    def test_unprocessed_records_output(self, output_generator):
+        records = [Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.COMPOUND, CompoundingInterval.ANNUALLY)]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out[0:5] == "Error")
+        assert (csv_out.split("\n")[1] == "Records have not been processed")
