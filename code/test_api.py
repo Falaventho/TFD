@@ -108,16 +108,19 @@ class TestDataProcessor:
                 assert (investment_result == expected_result)
 
     def test_random_valid_csv(self, data_processor):
-        random_contents = "investment id,investment name,principle,interest rate,interest type,compounding interval"
+        random_contents = "investment id,investment name,principle,interest rate,investment date,interest type,compounding interval"
         for i in range(1000):
             random_id = hex(random.randint(0, 1048576))
             random_name = "investment " + str(i + 1)
             random_principle = random.randint(1000, 100000)
             random_rate = random.randint(0, 100)
+            random_date = f"{random.randint(
+                2000, 2021)}-{random.randint(1, 12)}-{random.randint(1, 28)}"
             random_type = random.choice(["simple", "compound"])
-            random_interval = random.randint(1, 10)
+            random_interval = random.choice(
+                ["daily", "monthly", "quarterly", "annually"])
             random_contents += f"\n{random_id},{random_name},{
-                random_principle},{random_rate},{random_type},{random_interval}"
+                random_principle},{random_rate},{random_date},{random_type},{random_interval}"
 
         record_list = data_processor.parse_csv_contents(random_contents)
         assert (record_list is not None)
