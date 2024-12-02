@@ -152,12 +152,26 @@ class TestOutputGenerator:
                 1] == "1: Test Investment | $1,000.00 invested at 10.00%, 30 days ago, compounded annually currently valued at $1,100.00")
 
     def test_error_output(self, output_generator):
+        """
+            Args:
+                output_generator: checks what will be processed at generate_report
+
+            Returns:
+                Makes sure that error outputs work.
+        """
         records = [None, None]
         csv_out = output_generator.generate_report(
             records, ReportType.PROJECTION_CSV)
         assert (csv_out[0:5] == "Error")
 
     def test_none_record_output(self, output_generator):
+        """
+            Args:
+                output_generator: checks what will be processed at generate_report
+
+            Returns:
+                Error if there are incorrect characters in the user report (e.g. an o where a 0 should be).
+        """
         records = [None]
         csv_out = output_generator.generate_report(
             records, ReportType.PROJECTION_CSV)
@@ -165,6 +179,13 @@ class TestOutputGenerator:
         assert (csv_out.split("\n")[1] == "Invalid record detected")
 
     def test_negative_record_result_output(self, output_generator):
+        """
+            Args:
+                output_generator: takes what will be processed at generate_report.
+
+            Returns:
+                Error indicating that negative value records have been found.
+        """
         records = [Record("1", "Test Investment", 1000, .1, 30,
                           InterestType.COMPOUND, CompoundingInterval.ANNUALLY, -100)]
         csv_out = output_generator.generate_report(
@@ -174,6 +195,14 @@ class TestOutputGenerator:
                 "Negative investment values detected")
 
     def test_empty_record_list_output(self, output_generator):
+        """
+            Args:
+                output_generator: takes what will be processed at generate_report.
+                
+
+            Returns:
+                Error indicating that no records could be found to process
+        """
         records = []
         csv_out = output_generator.generate_report(
             records, ReportType.PROJECTION_CSV)
@@ -181,6 +210,13 @@ class TestOutputGenerator:
         assert (csv_out.split("\n")[1] == "No records to process")
 
     def test_unprocessed_records_output(self, output_generator):
+        """
+            Args:
+                output_generator: takes what will be processed at generate_report.
+
+            Returns:
+                Error indicating that there are records that have not been processed.
+        """
         records = [Record("1", "Test Investment", 1000, .1, 30,
                           InterestType.COMPOUND, CompoundingInterval.ANNUALLY)]
         csv_out = output_generator.generate_report(
