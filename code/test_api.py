@@ -149,7 +149,7 @@ class TestOutputGenerator:
         assert (csv_out is not None)
         assert (csv_out[0:5] == "inves")
         assert (csv_out.split("\n")[
-                1] == "1: Test Investment | $1,000.00 invested at 10.00%, 30 days ago, compounded annually currently valued at $1,100.00")
+                1] == "1,Test Investment,1,000.00,10.00,30,compound,annually,1,100.00")
 
     def test_error_output(self, output_generator):
         """
@@ -198,7 +198,7 @@ class TestOutputGenerator:
         """
             Args:
                 output_generator: takes what will be processed at generate_report.
-                
+
 
             Returns:
                 Error indicating that no records could be found to process

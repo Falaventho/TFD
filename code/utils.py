@@ -37,6 +37,13 @@ class Record():
                 interval_label = self._get_compounding_interval_label()
                 return f"compounded {interval_label}"
 
+    def _get_interest_type_brief(self):
+        match self.interest_type:
+            case InterestType.SIMPLE:
+                return "simple"
+            case InterestType.COMPOUND:
+                return "compound"
+
     def _get_compounding_interval_label(self):
         match self.compounding_interval:
             case CompoundingInterval.DAILY:
@@ -50,3 +57,6 @@ class Record():
 
     def _format_money(self, amount: float):
         return f'{amount:,.2f}'
+
+    def as_csv(self):
+        return f"{self.id},{self.name},{self._format_money(self.principle)},{self.rate * 100:.2f},{self.time_since_investment},{self._get_interest_type_brief()},{self._get_compounding_interval_label()},{self._format_money(self.result)}"
