@@ -13,6 +13,17 @@ class OutputGenerator():
         pass
 
     def generate_report(self, records: list[Record], type: ReportType) -> str:
+        """
+            Args:
+                records: list of records from user input.
+                ReportType: The type of report to generate (e.g. if you choose to generate a report, 
+                this allows you to type generate PROJECTION_CSV, instead of generate 0).
+                days_since_investment: Number of days since investment.
+               
+
+            Returns:
+                The user's formatted records.
+        """
         if len(records) == 0:
             return self.generate_error_output(["No records to process"])
 
@@ -31,6 +42,13 @@ class OutputGenerator():
                 return self.generate_projection_html(records)
 
     def generate_projection_csv(self, records: list[Record]) -> str:
+        """
+            Args:
+                records for a CSV file.
+
+            Returns:
+                String of records in CSV format.
+        """
         csv = "investment id,investment name,principle,interest rate,investment date,interest type,compounding interval,projected value"
         for record in records:
             csv += "\n" + record.as_csv()
@@ -40,13 +58,10 @@ class OutputGenerator():
     def generate_projection_html(self, records: list[Record]) -> str:
         """
             Args:
-                records
-                interest_rate: Annual interest rate as a decimal (e.g., 0.05 for 5%)
-                days_since_investment: Number of days since investment
-                compounding_interval: How often the interest is compounded (daily, monthly, quarterly, annually)
-
+                records : list of document records.
+                
             Returns:
-                Calculated compound interest.
+                String of records in HTML format.
         """
         html = "<!DOCTYPE HTML><html><head><title>Investment Projections</title></head><body>"
 
@@ -60,6 +75,14 @@ class OutputGenerator():
         return html
 
     def generate_error_output(self, errors: list[str]) -> str:
+        """
+            Args:
+                errors: takes list of errors that have been generated.
+                
+
+            Returns:
+                returns all errors that have been triggered.
+        """
         e = "Error(s) detected:"
         for msg in errors:
             e += f"\n{msg}"
