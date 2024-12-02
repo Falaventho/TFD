@@ -38,7 +38,16 @@ class OutputGenerator():
         return csv
 
     def generate_projection_html(self, records: list[Record]) -> str:
-        pass
+        html = "<!DOCTYPE HTML><html><head><title>Investment Projections</title></head><body>"
+
+        html += "<h1>Investment ID,Investment Name,Principle,Interest Rate,Investment Date,Interest Type,CompoundingInterval,Projected Value</h1>"
+
+        for record in records:
+            html += "<p>" + str(record) + "</p>"
+
+        html += "</body></html>"
+
+        return html
 
     def generate_error_output(self, errors: list[str]) -> str:
         e = "Error(s) detected:"

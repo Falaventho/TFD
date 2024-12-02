@@ -1,6 +1,5 @@
 from dataprocessor import DataProcessor
-from outputgenerator import OutputGenerator
-from utils import Record
+from outputgenerator import OutputGenerator, ReportType
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 
@@ -43,9 +42,13 @@ class UserInterface:
             self.input_frame, text="View Projection CSV", command=lambda: self._display_csv(self.projection_csv))
         self.input_view_button.pack()
 
-        self.input_write_button = ttk.Button(
+        self.input_write_csv_button = ttk.Button(
             self.input_frame, text="Write Projection CSV", command=self._write_projection_csv)
-        self.input_write_button.pack()
+        self.input_write_csv_button.pack()
+
+        self.input_write_html_button = ttk.Button(
+            self.input_frame, text="Write Projection HTML", command=self._write_projection_html)
+        self.input_write_html_button.pack()
 
     def _handle_browse(self):
         file_path = filedialog.askopenfilename(
@@ -62,8 +65,10 @@ class UserInterface:
             contents = f.read()
 
         records = self.data_processor.parse_csv_contents(contents)
-        self.projection_csv = self.output_generator.generate_projection_csv(
-            records)
+        self.projection_csv = self.output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        self.projection_html = self.output_generator.generate_report(
+            records, ReportType.PROJECTION_HTML)
 
     def _write_projection_csv(self):
         if self.projection_csv:
@@ -90,3 +95,12 @@ class UserInterface:
         with open(file_path, "r") as f:
             contents = f.read()
         self.display_csv(contents)
+
+    def _write_projection_html(self):
+        if self.projection_html:
+            with open("projection.html", "w") as f:
+                f.write(self.projection_html)
+            messagebox.showinfo(
+                "Success", "Projection HTML file written successfully.")
+        else:
+            messagebox.showerror("Error", "No projection HTML file to write.")
