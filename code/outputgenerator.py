@@ -33,11 +33,21 @@ class OutputGenerator():
     def generate_projection_csv(self, records: list[Record]) -> str:
         csv = "investment id,investment name,principle,interest rate,investment date,interest type,compounding interval,projected value"
         for record in records:
-            csv += "\n" + str(record)
+            csv += "\n" + record.as_csv()
 
         return csv
 
     def generate_projection_html(self, records: list[Record]) -> str:
+        """
+            Args:
+                records
+                interest_rate: Annual interest rate as a decimal (e.g., 0.05 for 5%)
+                days_since_investment: Number of days since investment
+                compounding_interval: How often the interest is compounded (daily, monthly, quarterly, annually)
+
+            Returns:
+                Calculated compound interest.
+        """
         html = "<!DOCTYPE HTML><html><head><title>Investment Projections</title></head><body>"
 
         html += "<h1>Investment ID,Investment Name,Principle,Interest Rate,Investment Date,Interest Type,CompoundingInterval,Projected Value</h1>"
