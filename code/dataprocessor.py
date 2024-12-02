@@ -9,34 +9,42 @@ class DataProcessor():
 
     def parse_csv_contents(self, contents: str) -> list[Record]:
         lines = contents.split("\n")
-        if lines[0] != "investment id,investment name,principle,interest rate, investment date,interest type,compounding interval":
+        if lines[0] != "investment id,investment name,principle,interest rate,investment date,interest type,compounding interval":
             raise ValueError("Invalid CSV format - header mismatch")
 
         records = []
-        for line in lines:
+        for line in lines[1:]:
             parts = line.split(",")
-            if len(parts) != 6:
+            if len(parts) != 7:
                 raise ValueError(f"Invalid CSV format around {line}")
 
             id, name, principle, rate, investment_date, type, interval = parts
 
-            time_since_investment = self.__calculate_days_since_investment(
+            time_since_investment = self._calculate_days_since_investment(
                 investment_date)
 
-            record = Record(id, name, float(principle), float(
-                rate), time_since_investment, InterestType[type], CompoundingInterval[interval])
+            record = Record(
+                id,
+                name,
+                float(principle),
+                float(rate) * .01,
+                time_since_investment,
+                InterestType[type.upper()],
+                CompoundingInterval[interval.upper()],
+            )
+
+            record.result = self.handle_investment(
+                record.principle, record.rate, record.time_since_investment, record.type, record.compounding_interval)
+
             records.append(record)
 
         return records
 
-    def __calculate_days_since_investment(self, investment_date: str) -> int:
+    def _calculate_days_since_investment(self, investment_date: str) -> int:
         listed_date = datetime.strptime(investment_date, "%Y-%m-%d")
-        return (date.today() - date(listed_date)).days
+        return (date.today() - listed_date.date()).days
 
-    def parse_csv_contents(self, contents: str) -> list[str]:
-        pass
-
-    def handle_investment(self, principal: float, interest_rate: float, investment_date: str, interest_type: InterestType, compounding_interval: CompoundingInterval) -> tuple[float, float]:
+    def handle_investment(self, principal: float, interest_rate: float, days_since_investment: str, interest_type: InterestType, compounding_interval: CompoundingInterval) -> float:
         """
             Args:
                 principal: Initial amount invested.
@@ -49,24 +57,21 @@ class DataProcessor():
                 Tuple of calculated interest and total amount after interest.
         """
 
-        days_since_investment = self.__calculate_days_since_investment(
-            investment_date)
-
         if interest_type == InterestType.SIMPLE:
-            interest = self.__calculate_simple_interest(
+            interest = self._calculate_simple_interest(
                 principal, interest_rate, days_since_investment)
         elif interest_type == InterestType.COMPOUND:
-            interest = self.__calculate_compound_interest(
+            interest = self._calculate_compound_interest(
                 principal, interest_rate, days_since_investment, compounding_interval)
         else:
             raise ValueError("Invalid interest type")
 
         total_amount = principal + interest
 
-        return interest, total_amount
+        return round(total_amount, 2)
 
     # Calculates simple interest
-    def __calculate_simple_interest(self, principal: float, interest_rate: float, days_since_investment: int) -> float:
+    def _calculate_simple_interest(self, principal: float, interest_rate: float, days_since_investment: int) -> float:
         """
             Args:
                 principal: Initial amount invested.
@@ -85,7 +90,7 @@ class DataProcessor():
 
         return interest
 
-    def __calculate_compound_interest(self, principal: float, interest_rate: float, days_since_investment: int, compounding_interval: CompoundingInterval) -> float:
+    def _calculate_compound_interest(self, principal: float, interest_rate: float, days_since_investment: int, compounding_interval: CompoundingInterval) -> float:
         """
             Args:
                 principal: Initial amount invested.
