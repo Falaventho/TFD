@@ -1,6 +1,6 @@
 from dataprocessor import DataProcessor
-from outputgenerator import OutputGenerator
-from utils import Record
+from outputgenerator import OutputGenerator, ReportType
+from utils import Record, InterestType, CompoundingInterval
 import pytest
 import random
 
@@ -9,7 +9,7 @@ class TestDataProcessor:
 
     @pytest.fixture
     def csv_contents(self) -> str:
-        with open("../csv files/example.csv", "r") as f:
+        with open("./csv files/example.csv", "r") as f:
             contents = f.read()
         return contents
 
@@ -28,8 +28,14 @@ class TestDataProcessor:
         for record in record_list:
             assert isinstance(record, Record)
 
+    def test_header_mismatch_csv(self, data_processor, csv_contents):
+        malformed_contents = csv_contents.replace(
+            "investment id", "investment_id")
+        with pytest.raises(ValueError):
+            data_processor.parse_csv_contents(malformed_contents)
+
     def test_parse_invalid_csv(self, data_processor, csv_contents):
-        position = random.range(0, len(csv_contents))
+        position = random.randint(0, len(csv_contents))
         malformed_contents = csv_contents[:position] + \
             "," + csv_contents[position:]
         with pytest.raises(ValueError):
@@ -37,45 +43,33 @@ class TestDataProcessor:
 
     def test_handle_investment(self, data_processor):
         principle = 1000
-        time_since_investment = 5
-        rates = [10, 20, 30]
-        types = ["simple", "compound"]
+        days_since_investment = 30
+        rate = 0.1
+        types = [InterestType.SIMPLE, InterestType.COMPOUND]
+        compounding_interval = CompoundingInterval.ANNUALLY
         expected_results = [
-            1000 + 1000 * 10 / 100 * time_since_investment,
-            1000 * (1 + 10 / 100) ** time_since_investment,
-            1000 + 1000 * 20 / 100 * time_since_investment,
-            1000 * (1 + 20 / 100) ** time_since_investment,
-            1000 + 1000 * 30 / 100 * time_since_investment,
-            1000 * (1 + 30 / 100) ** time_since_investment
+            round(1000.0 * (1 + (.1 * 30/365)), 2),
+            round(1000 * (1 + .1/1)**(1*30/365), 2)
         ]
 
-        for rate in rates:
-            for type in types:
-                result = data_processor.handle_investment(
-                    principle, rate, time_since_investment, type)
+        for type in types:
+            result = data_processor.handle_investment(
+                principle, rate, days_since_investment, type, compounding_interval)
 
-                assert (result is not None)
-                assert (result == expected_results.pop(0))
+            assert (result is not None)
+            assert (result == expected_results.pop(0))
 
     def test_nonpositive_handle_investment(self, data_processor):
-        principle = 1000
-        time_since_investment = 5
-        rates = [0, -10]
-        types = ["simple", "compound"]
-        expected_results = [
-            1000,
-            1000,
-            1000 + 1000 * -10 / 100 * time_since_investment,
-            1000 * (1 + -10 / 100) ** time_since_investment
-        ]
+        principle = 100
+        days_since_investment = 395
+        rate = 0
+        type = InterestType.SIMPLE
+        compounding_interval = CompoundingInterval.ANNUALLY
 
-        for rate in rates:
-            for type in types:
-                result = data_processor.handle_investment(
-                    principle, rate, time_since_investment, type)
-
-                assert (result is not None)
-                assert (result == expected_results.pop(0))
+        result = data_processor.handle_investment(
+            principle, rate, days_since_investment, type, compounding_interval)
+        assert (result is not None)
+        assert (result == 100)
 
     def test_multiple_investments_from_file(self, data_processor, csv_contents):
         record_list = data_processor.parse_csv_contents(csv_contents)
@@ -85,41 +79,54 @@ class TestDataProcessor:
 
     def test_multiple_time_periods(self, data_processor):
         principle = 1000
-        times_since_investment = [1, 2, 3, 4, 5]
-        rate = 10
-        types = ["simple", "compound"]
-        expected_results = [
-            1000 + 1000 * 10 * 1,
-            1000 + 1000 * 10 * 2,
-            1000 + 1000 * 10 * 3,
-            1000 + 1000 * 10 * 4,
-            1000 + 1000 * 10 * 5,
-            1000 * (1 + 10 / 100) ** 1,
-            1000 * (1 + 10 / 100) ** 2,
-            1000 * (1 + 10 / 100) ** 3,
-            1000 * (1 + 10 / 100) ** 4,
-            1000 * (1 + 10 / 100) ** 5
+        times_since_investment = [10, 50, 100, 300, 600]
+        rate = .1
+        types = [InterestType.SIMPLE, InterestType.COMPOUND]
+        interval = CompoundingInterval.ANNUALLY
+
+        expected_simple_results = [
+            round(1000.0 * (1 + (.1 * 10/365)), 2),
+            round(1000.0 * (1 + (.1 * 50/365)), 2),
+            round(1000.0 * (1 + (.1 * 100/365)), 2),
+            round(1000.0 * (1 + (.1 * 300/365)), 2),
+            round(1000.0 * (1 + (.1 * 600/365)), 2)
+        ]
+
+        expected_compound_results = [
+            round(1000 * (1 + .1/1)**(1*10/365), 2),
+            round(1000 * (1 + .1/1)**(1*50/365), 2),
+            round(1000 * (1 + .1/1)**(1*100/365), 2),
+            round(1000 * (1 + .1/1)**(1*300/365), 2),
+            round(1000 * (1 + .1/1)**(1*600/365), 2)
         ]
 
         for type in types:
-            for time in times_since_investment:
+            if type == InterestType.SIMPLE:
+                expected_results = expected_simple_results
+            else:
+                expected_results = expected_compound_results
+
+            for time, expected_result in zip(times_since_investment, expected_results):
                 investment_result = data_processor.handle_investment(
-                    principle, rate, time, type)
+                    principle, rate, time, type, interval)
 
                 assert (investment_result is not None)
-                assert (investment_result == expected_results.pop(0))
+                assert (investment_result == expected_result)
 
     def test_random_valid_csv(self, data_processor):
-        random_contents = "investment id,investment name,principle,interest rate,interest type,compounding interval"
+        random_contents = "investment id,investment name,principle,interest rate,investment date,interest type,compounding interval"
         for i in range(1000):
             random_id = hex(random.randint(0, 1048576))
             random_name = "investment " + str(i + 1)
             random_principle = random.randint(1000, 100000)
             random_rate = random.randint(0, 100)
+            random_date = f"{random.randint(
+                2000, 2021)}-{random.randint(1, 12)}-{random.randint(1, 28)}"
             random_type = random.choice(["simple", "compound"])
-            random_interval = random.randint(1, 10)
+            random_interval = random.choice(
+                ["daily", "monthly", "quarterly", "annually"])
             random_contents += f"\n{random_id},{random_name},{
-                random_principle},{random_rate},{random_type},{random_interval}"
+                random_principle},{random_rate},{random_date},{random_type},{random_interval}"
 
         record_list = data_processor.parse_csv_contents(random_contents)
         assert (record_list is not None)
@@ -135,12 +142,80 @@ class TestOutputGenerator:
         return OutputGenerator()
 
     def test_csv_output(self, output_generator):
-        records = [Record(1000, 10, 5, "simple", 1000 + 1000 * 10 * 5)]
-        csv_out = output_generator.generate_projection_csv(records)
-        assert (
-            csv_out == "principle,rate,time_since_investment,type,result\n1000,10,5,simple,1500\n")
+        records = [Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100)]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out is not None)
+        assert (csv_out[0:5] == "inves")
+        assert (csv_out.split("\n")[
+                1] == "1: Test Investment | $1,000.00 invested at 10.00%, 30 days ago, compounded annually currently valued at $1,100.00")
 
     def test_error_output(self, output_generator):
-        records = [1000]
-        csv_out = output_generator.generate_projection_csv(records)
+        records = [None, None]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
         assert (csv_out[0:5] == "Error")
+
+    def test_none_record_output(self, output_generator):
+        records = [None]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out[0:5] == "Error")
+        assert (csv_out.split("\n")[1] == "Invalid record detected")
+
+    def test_negative_record_result_output(self, output_generator):
+        records = [Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.COMPOUND, CompoundingInterval.ANNUALLY, -100)]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out[0:5] == "Error")
+        assert (csv_out.split("\n")[1] ==
+                "Negative investment values detected")
+
+    def test_empty_record_list_output(self, output_generator):
+        records = []
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out[0:5] == "Error")
+        assert (csv_out.split("\n")[1] == "No records to process")
+
+    def test_unprocessed_records_output(self, output_generator):
+        records = [Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.COMPOUND, CompoundingInterval.ANNUALLY)]
+        csv_out = output_generator.generate_report(
+            records, ReportType.PROJECTION_CSV)
+        assert (csv_out[0:5] == "Error")
+        assert (csv_out.split("\n")[1] == "Records have not been processed")
+
+
+class TestUtils:
+
+    def test_get_interest_type_label(self):
+        records = [Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100),
+                   Record("1", "Test Investment", 1000, .1, 30,
+                          InterestType.SIMPLE, CompoundingInterval.ANNUALLY, 1100)
+                   ]
+
+        expected_labels = ["compounded annually", "accruing simple interest"]
+
+        for record in records:
+            assert record._get_interest_type_label() == expected_labels.pop(0)
+
+    def test_get_compounding_interval_label(self):
+        records = [
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.DAILY, 1100),
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.MONTHLY, 1100),
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.QUARTERLY, 1100),
+            Record("1", "Test Investment", 1000, .1, 30,
+                   InterestType.COMPOUND, CompoundingInterval.ANNUALLY, 1100)
+        ]
+
+        expected_labels = ["daily", "monthly", "quarterly", "annually"]
+
+        for record in records:
+            assert record._get_compounding_interval_label() == expected_labels.pop(0)
