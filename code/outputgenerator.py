@@ -19,7 +19,7 @@ class OutputGenerator():
                 ReportType: The type of report to generate (e.g. if you choose to generate a report, 
                 this allows you to type generate PROJECTION_CSV, instead of generate 0).
                 days_since_investment: Number of days since investment.
-               
+
 
             Returns:
                 The user's formatted records.
@@ -58,14 +58,15 @@ class OutputGenerator():
     def generate_projection_html(self, records: list[Record]) -> str:
         """
             Args:
-                records : list of document records.
-                
-            Returns:
-                String of records in HTML format.
-        """
-        html = "<!DOCTYPE HTML><html><head><title>Investment Projections</title></head><body>"
+                records
+                interest_rate: Annual interest rate as a decimal (e.g., 0.05 for 5%)
+                days_since_investment: Number of days since investment
+                compounding_interval: How often the interest is compounded (daily, monthly, quarterly, annually)
 
-        html += "<h1>Investment ID,Investment Name,Principle,Interest Rate,Investment Date,Interest Type,CompoundingInterval,Projected Value</h1>"
+            Returns:
+                Calculated compound interest.
+        """
+        html = "<!DOCTYPE HTML><html><head><title>Investment Projections</title></head><body><h1>Investment ID,Investment Name,Principle,Interest Rate,Investment Date,Interest Type,CompoundingInterval,Projected Value</h1>"
 
         for record in records:
             html += "<p>" + str(record) + "</p>"
@@ -78,7 +79,7 @@ class OutputGenerator():
         """
             Args:
                 errors: takes list of errors that have been generated.
-                
+
 
             Returns:
                 returns all errors that have been triggered.
