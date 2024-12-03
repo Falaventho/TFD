@@ -66,10 +66,10 @@ class OutputGenerator():
             Returns:
                 Calculated compound interest.
         """
-        html = "<!DOCTYPE HTML><html><head><title>Investment Projections</title></head><body><h1>Investment ID,Investment Name,Principle,Interest Rate,Investment Date,Interest Type,CompoundingInterval,Projected Value</h1>"
+        html = "<!DOCTYPE HTML><html><head><title>Investment Projections</title><link rel='stylesheet' href='styles.css' /></head><body><table><tr><th>Investment ID</th><th>Investment Name</th><th>Principle</th><th>Interest Rate</th><th>Investment Date</th><th>Interest Type</th><th>CompoundingInterval</th><th>Projected Value</th></tr>"
 
         for record in records:
-            html += "<p>" + str(record) + "</p>"
+            html += record.as_html_row()
 
         html += "</body></html>"
 

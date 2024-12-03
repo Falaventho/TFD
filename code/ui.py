@@ -102,5 +102,12 @@ class UserInterface:
                 f.write(self.projection_html)
             messagebox.showinfo(
                 "Success", "Projection HTML file written successfully.")
+            self._write_projection_css()
         else:
             messagebox.showerror("Error", "No projection HTML file to write.")
+
+    def _write_projection_css(self):
+        with open("styles.css", "w") as f:
+            f.write(
+                "body {background-color: rgb(12, 12, 12);color: whitesmoke;}table {border-collapse: collapse;width: 100%;text-align: left;}th {background-color: black;}tr {border-bottom: 1px solid #f2f2f2;}td {padding: 8px;}")
+        messagebox.showinfo("Success", "CSS file written successfully.")

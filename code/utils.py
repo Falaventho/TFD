@@ -60,3 +60,6 @@ class Record():
 
     def as_csv(self):
         return f"{self.id},{self.name},{self._format_money(self.principle)},{self.rate * 100:.2f},{self.time_since_investment},{self._get_interest_type_brief()},{self._get_compounding_interval_label()},{self._format_money(self.result)}"
+
+    def as_html_row(self):
+        return f"<tr><td>{self.id}</td><td>{self.name}</td><td>{self._format_money(self.principle)}</td><td>{self.rate * 100:.2f}</td><td>{self.time_since_investment}</td><td>{self._get_interest_type_brief()}</td><td>{self._get_compounding_interval_label()}</td><td>{self._format_money(self.result)}</td></tr>"
