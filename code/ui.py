@@ -2,6 +2,7 @@ from dataprocessor import DataProcessor
 from outputgenerator import OutputGenerator, ReportType
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
+import os
 
 
 class UserInterface:
@@ -43,12 +44,8 @@ class UserInterface:
         self.input_view_button.pack()
 
         self.input_write_csv_button = ttk.Button(
-            self.input_frame, text="Write Projection CSV", command=self._write_projection_csv)
+            self.input_frame, text="Save Output", command=self._write_output_dir)
         self.input_write_csv_button.pack()
-
-        self.input_write_html_button = ttk.Button(
-            self.input_frame, text="Write Projection HTML", command=self._write_projection_html)
-        self.input_write_html_button.pack()
 
     def _handle_browse(self):
         file_path = filedialog.askopenfilename(
@@ -70,15 +67,6 @@ class UserInterface:
         self.projection_html = self.output_generator.generate_report(
             records, ReportType.PROJECTION_HTML)
 
-    def _write_projection_csv(self):
-        if self.projection_csv:
-            with open("projection.csv", "w") as f:
-                f.write(self.projection_csv)
-            messagebox.showinfo(
-                "Success", "Projection CSV file written successfully.")
-        else:
-            messagebox.showerror("Error", "No projection CSV file to write.")
-
     def _display_csv(self, csv_contents: str):
         if not csv_contents:
             messagebox.showerror("Error", "No CSV contents to display.")
@@ -96,11 +84,18 @@ class UserInterface:
             contents = f.read()
         self.display_csv(contents)
 
-    def _write_projection_html(self):
-        if self.projection_html:
-            with open("projection.html", "w") as f:
+    def _write_output_dir(self):
+        filepath = filedialog.askdirectory(
+            title="Where would you like to save the output files?")
+        if filepath:
+            with open(os.path.join(filepath, "projection.csv"), "w") as f:
+                f.write(self.projection_csv)
+            with open(os.path.join(filepath, "projection.html"), "w") as f:
                 f.write(self.projection_html)
+            with open(os.path.join(filepath, "styles.css"), "w") as f:
+                f.write(
+                    "body {background-color: rgb(12, 12, 12);color: whitesmoke;}table {border-collapse: collapse;width: 100%;text-align: left;}th {background-color: black;}tr {border-bottom: 1px solid #f2f2f2;}td {padding: 8px;}")
             messagebox.showinfo(
-                "Success", "Projection HTML file written successfully.")
+                "Success", "Projection files written successfully.")
         else:
-            messagebox.showerror("Error", "No projection HTML file to write.")
+            messagebox.showerror("Error", "No directory selected.")
